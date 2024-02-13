@@ -21,11 +21,11 @@ export function getWordCount(text: string): number {
     "g"
   );
   const result = (text.match(pattern) || []).length;
-  return formatNumber(result);
+  return result;
 }
 
 export function getCharacterCount(text: string): number {
-  return formatNumber(text.length);
+  return text.length;
 }
 
 export function getFootnoteCount(text: string): number {
@@ -35,14 +35,14 @@ export function getFootnoteCount(text: string): number {
   let overallFn = 0;
   if (regularFn) overallFn += regularFn.length;
   if (inlineFn) overallFn += inlineFn.length;
-  return formatNumber(overallFn);
+  return overallFn;
 }
 
 export function getCitationCount(text: string): number {
   const pandocCitations = text.match(/@[A-Za-z0-9-]+[,;\]](?!\()/gi);
   if (!pandocCitations) return 0;
   const uniqueCitations = [...new Set(pandocCitations)].length;
-  return formatNumber(uniqueCitations);
+  return uniqueCitations;
 }
 
 export function getSentenceCount(text: string): number {
@@ -51,7 +51,7 @@ export function getSentenceCount(text: string): number {
       /[^.!?\s][^.!?]*(?:[.!?](?!['"]?\s|$)[^.!?]*)*[.!?]?['"]?(?=\s|$)/gm
     ) || []
   ).length;
-  return formatNumber(sentences);
+  return sentences;
 }
 
 export function getPageCount(text: string, pageWords: number): number {
@@ -60,20 +60,9 @@ export function getPageCount(text: string, pageWords: number): number {
 
 export function getTotalFileCount(vault: Vault): number {
   const fileCount = vault.getMarkdownFiles().length;
-  return formatNumber(fileCount);
+  return fileCount;
 }
 
 export function cleanComments(text: string): string {
   return text.replace(MATCH_COMMENT, "").replace(MATCH_HTML_COMMENT, "");
-}
-
-// Removes floating point errors and adds thousands separators to a number.
-function formatNumber(number: number): string {
-  if (typeof Intl !== 'undefined' && typeof Intl.NumberFormat === 'function') {
-    // Use the user's local settings if available
-    return Math.round(number).toLocaleString();
-  } else {
-    // Default to 'en-US' otherwise
-    return Math.round(number).toLocaleString('en-US');
-  }
 }
